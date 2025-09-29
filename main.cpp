@@ -16,6 +16,8 @@ struct FCharacter
 FCharacter Player;
 FCharacter Monster;
 
+FCharacter Characters[3];
+
 void RenderCharacter(FCharacter InData)
 {
 	COORD Position;
@@ -29,24 +31,36 @@ void RenderCharacter(FCharacter InData)
 //렌더 모든 캐릭터를 
 void Render()
 {
-	//for
-	//{
-	//	RenderCharacter(Player);
-	//}
-	RenderCharacter(Player);
-	RenderCharacter(Monster);
+	for (int i = 0; i < 3; ++i)
+	{
+		RenderCharacter(Characters[i]);
+	}
+	//RenderCharacter(Player);
+	//RenderCharacter(Monster);
 }
 
 //entrypoint
 int main()
 {
-	Player.X = 1;
-	Player.Y = 1;
-	Player.Shape = 'P';
+	//Player.X = 1;
+	//Player.Y = 1;
+	//Player.Shape = 'P';
 
-	Monster.X = 10;
-	Monster.Y = 10;
-	Monster.Shape = 'M';
+	//Monster.X = 10;
+	//Monster.Y = 10;
+	//Monster.Shape = 'M';
+
+	Characters[0].X = 1;
+	Characters[0].Y = 1;
+	Characters[0].Shape = 'P';
+
+	Characters[1].X = 10;
+	Characters[1].Y = 10;
+	Characters[1].Shape = 'M';
+
+	Characters[2].X = 5;
+	Characters[2].Y = 5;
+	Characters[2].Shape = 'M';
 
 	Render();
 
