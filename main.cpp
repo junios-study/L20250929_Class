@@ -1,11 +1,10 @@
 #include <iostream>
 #include <Windows.h>
+#include <conio.h>
+
 
 using namespace std;
-//[][][][] [][][][] []
 
-// C++ -> class
-// UE
 struct FCharacter
 {
 	int X;
@@ -13,20 +12,26 @@ struct FCharacter
 	char Shape;
 };
 
-FCharacter Player;
-FCharacter Monster;
-
 FCharacter Characters[3];
+
+int KeyCode;
+
+void Input()
+{
+	KeyCode = _getch();
+}
 
 void RenderCharacter(FCharacter InData)
 {
 	COORD Position;
-	Position.X = InData.X;
-	Position.Y = InData.Y;
+	Position.X = (SHORT)InData.X;
+	Position.Y = (SHORT)InData.Y;
 
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), Position);
 	cout << InData.Shape;
 }
+
+
 //·»´õ
 //·»´õ ¸ðµç Ä³¸¯ÅÍ¸¦ 
 void Render()
@@ -35,21 +40,10 @@ void Render()
 	{
 		RenderCharacter(Characters[i]);
 	}
-	//RenderCharacter(Player);
-	//RenderCharacter(Monster);
 }
 
-//entrypoint
-int main()
+void Init()
 {
-	//Player.X = 1;
-	//Player.Y = 1;
-	//Player.Shape = 'P';
-
-	//Monster.X = 10;
-	//Monster.Y = 10;
-	//Monster.Shape = 'M';
-
 	Characters[0].X = 1;
 	Characters[0].Y = 1;
 	Characters[0].Shape = 'P';
@@ -57,14 +51,49 @@ int main()
 	Characters[1].X = 10;
 	Characters[1].Y = 10;
 	Characters[1].Shape = 'M';
+}
 
-	Characters[2].X = 5;
-	Characters[2].Y = 5;
-	Characters[2].Shape = 'M';
+void MovePlayer()
+{
+	if (KeyCode == 'w')
+	{
+		Characters[0].Y--;
+	}
+	else if (KeyCode == 's')
+	{
+		Characters[0].Y++;
+	}
+	else if (KeyCode == 'a')
+	{
+		Characters[0].X--;
+	}
+	else if (KeyCode == 'd')
+	{
+		Characters[0].X++;
+	}
+}
 
-	Render();
+void MoveMonster()
+{
 
+}
 
+void Tick()
+{
+	MovePlayer();
+	MoveMonster();
+}
+
+int main()
+{
+	Init();
+
+	while (true)
+	{
+		Input();
+		Tick();
+		Render();
+	}
 
 	return 0;
 }
