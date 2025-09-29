@@ -1,31 +1,55 @@
 #include <iostream>
+#include <Windows.h>
 
 using namespace std;
+//[][][][] [][][][] []
+
+// C++ -> class
+// UE
+struct FCharacter
+{
+	int X;
+	int Y;
+	char Shape;
+};
+
+FCharacter Player;
+FCharacter Monster;
+
+void RenderCharacter(FCharacter InData)
+{
+	COORD Position;
+	Position.X = InData.X;
+	Position.Y = InData.Y;
+
+	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), Position);
+	cout << InData.Shape;
+}
+//·»´õ
+//·»´õ ¸ðµç Ä³¸¯ÅÍ¸¦ 
+void Render()
+{
+	//for
+	//{
+	//	RenderCharacter(Player);
+	//}
+	RenderCharacter(Player);
+	RenderCharacter(Monster);
+}
 
 //entrypoint
 int main()
 {
-	//[1][][][]			[2][][][]      [][][][][][][][]   [][][][][][][][]
-	//Player							P				  PP
-	//0x010101 + 0		0x010101 + 1	0x20202(&P)			 0x303030(&PP)
-	//Player[0]			Player[1]
-	//*P				*(P+1)
+	Player.X = 1;
+	Player.Y = 1;
+	Player.Shape = 'P';
 
-	//[][][][][][][][]
-	//PPP
-	//0x3030404(&PPP)
+	Monster.X = 10;
+	Monster.Y = 10;
+	Monster.Shape = 'M';
 
-	int Player[2] = { 1, 2 };
-	int* P = Player;
-	//int** PP = &P;
-	//int*** PPP = &PP;
+	Render();
 
-	//cout << &P << endl;
-	//cout << PP << endl;
-
-	cout << Player[1] << endl;
-	cout << *(Player+1) << endl;
-	cout << *(P+1) << endl;
 
 
 	return 0;
