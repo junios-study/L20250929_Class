@@ -21,14 +21,19 @@ void Input()
 	KeyCode = _getch();
 }
 
-void RenderCharacter(FCharacter InData)
+
+//C++
+void RenderCharacter(const FCharacter* InData)
 {
 	COORD Position;
-	Position.X = (SHORT)InData.X;
-	Position.Y = (SHORT)InData.Y;
+	Position.X = (SHORT)InData->X;
+	//Position.Y = (SHORT)(*InData).Y;
+	Position.Y = (SHORT)InData->Y;
+
+	//InData->Y++;
 
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), Position);
-	cout << InData.Shape;
+	cout << InData->Shape;
 }
 
 
@@ -36,9 +41,10 @@ void RenderCharacter(FCharacter InData)
 //렌더 모든 캐릭터를 
 void Render()
 {
+	system("cls");
 	for (int i = 0; i < 3; ++i)
 	{
-		RenderCharacter(Characters[i]);
+		RenderCharacter(&Characters[i]);
 	}
 }
 
@@ -107,8 +113,18 @@ void Tick()
 	MoveMonster();
 }
 
+
+
+
 int main()
 {
+	//FCharacter* Data = new FCharacter();
+
+	//(*Data).X = 1;
+	//Data->X = 1;
+
+	//delete Data;
+
 	Init();
 
 	while (true)
