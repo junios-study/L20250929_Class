@@ -5,16 +5,27 @@
 
 using namespace std;
 
+enum ERenderScreenBuffer
+{
+	FrontBuffer = 0,
+	BackBuffer = 1
+};
+
+int CurrentBufferIndex = FrontBuffer;
+
 struct FCharacter
 {
 	int X;
 	int Y;
-	char Shape;
+	string Shape;
 };
 
 FCharacter Characters[3];
 
 int KeyCode;
+
+HANDLE FrontBufferHandle;
+HANDLE BackBufferHandle;
 
 void Input()
 {
@@ -30,10 +41,64 @@ void RenderCharacter(const FCharacter* InData)
 	//Position.Y = (SHORT)(*InData).Y;
 	Position.Y = (SHORT)InData->Y;
 
-	//InData->Y++;
 
-	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), Position);
-	cout << InData->Shape;
+	if (CurrentBufferIndex == FrontBuffer)
+	{
+		SetConsoleCursorPosition(FrontBufferHandle, Position);
+		WriteConsole(FrontBufferHandle, InData->Shape.c_str(), 1, NULL, NULL);
+	}
+	else
+	{
+		SetConsoleCursorPosition(BackBufferHandle, Position);
+		WriteConsole(BackBufferHandle, InData->Shape.c_str(), 1, NULL, NULL);
+	}
+
+
+}
+
+void Clear()
+{
+	COORD coordScreen = { 0, 0 };    // home for the cursor
+	DWORD cCharsWritten;
+	CONSOLE_SCREEN_BUFFER_INFO csbi;
+	DWORD dwConSize;
+
+	if (CurrentBufferIndex == FrontBuffer)
+	{
+		//스크린 버퍼 정보 가져오기
+		GetConsoleScreenBufferInfo(FrontBufferHandle, &csbi);
+		dwConSize = csbi.dwSize.X * csbi.dwSize.Y;
+		FillConsoleOutputCharacter(FrontBufferHandle,
+			(TCHAR)' ',
+			dwConSize,
+			coordScreen,
+			&cCharsWritten);
+	}
+	else
+	{
+		GetConsoleScreenBufferInfo(BackBufferHandle, &csbi);
+		dwConSize = csbi.dwSize.X * csbi.dwSize.Y;
+		FillConsoleOutputCharacter(BackBufferHandle,
+			(TCHAR)' ',
+			dwConSize,
+			coordScreen,
+			&cCharsWritten);
+	}
+}
+
+void Present()
+{
+	if (CurrentBufferIndex == FrontBuffer)
+	{
+		SetConsoleActiveScreenBuffer(FrontBufferHandle);
+	}
+	else
+	{
+		SetConsoleActiveScreenBuffer(BackBufferHandle);
+	}
+
+	CurrentBufferIndex++;
+	CurrentBufferIndex = CurrentBufferIndex % 2;
 }
 
 
@@ -41,25 +106,35 @@ void RenderCharacter(const FCharacter* InData)
 //렌더 모든 캐릭터를 
 void Render()
 {
-	system("cls");
-	for (int i = 0; i < 3; ++i)
+	//그래픽 카드 그리는 방식
+	Clear();
+
+	for (int i = 0; i < 2; ++i)
 	{
 		RenderCharacter(&Characters[i]);
 	}
+
+	Present();
 }
 
 void Init()
 {
+	//0
+	FrontBufferHandle = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, 0, nullptr, CONSOLE_TEXTMODE_BUFFER, NULL);
+
+	//1
+	BackBufferHandle = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, 0, nullptr, CONSOLE_TEXTMODE_BUFFER, NULL);
+
 	//형변환, Casting
 	srand((unsigned int)time(nullptr));
 
 	Characters[0].X = 1;
 	Characters[0].Y = 1;
-	Characters[0].Shape = 'P';
+	Characters[0].Shape = "P";
 
 	Characters[1].X = 10;
 	Characters[1].Y = 10;
-	Characters[1].Shape = 'M';
+	Characters[1].Shape = "M";
 }
 
 void MovePlayer()
